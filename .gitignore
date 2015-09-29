@@ -1,7 +1,11 @@
-ty generated #
+# =============== #
+# Unity generated #
 # =============== #
 Temp/
+Obj/
+UnityGenerated/
 Library/
+Assets/AssetStoreTools*
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -17,6 +21,7 @@ obj/
 *.user
 *.unityproj
 *.booproj
+.vs
 
 # ============ #
 # OS generated #
