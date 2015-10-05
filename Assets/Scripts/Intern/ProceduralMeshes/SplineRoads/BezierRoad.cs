@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BezierRoad : MonoBehaviour 
+public class BezierRoad : AProceduralMesh
 {
     public enum ShapeType { SIMPLE, COMPLEXE };
 
@@ -77,20 +77,11 @@ public class BezierRoad : MonoBehaviour
     float m_width02 = 1;
     
 
-
-    public void init()
+    public override void Init()
     {
         if( m_spline == null )
         {
-            GameObject tmp = new GameObject( "spline" );
-            tmp.AddComponent<Bezier>();
-            m_spline = tmp.GetComponent<Bezier>();
-        }
-
-        if( m_spline.transform.parent == null || m_spline.transform.parent != this.transform )
-        {
-            m_spline.transform.SetParent( this.transform );
-            m_spline.transform.localPosition = Vector3.zero;
+            m_spline = ScriptableObject.CreateInstance<Bezier>();
         }
 
         if( m_mesh == null )
@@ -136,14 +127,18 @@ public class BezierRoad : MonoBehaviour
     }
 
     //generate a new Mesh. If the GameObjet isn't initialyze, it will be initialysed. 
-    public void generate()
+    public override void Generate()
     {
         if( m_mesh == null )
-            init();
+            Init();
         if( m_shapeType == ShapeType.SIMPLE )
             buildSimpleMesh();
         else
             buildComplexMesh();
+
+        //resolve a small bug : set the right center of each roads.
+        GetComponent<MeshCollider>().enabled = false;
+        GetComponent<MeshCollider>().enabled = true;
     }
 
     Vector3 getSplinePoint( int index )
@@ -271,10 +266,10 @@ public class BezierRoad : MonoBehaviour
     Mesh buildComplexMesh()
     {
         //global to local
-        Vector3 savedPosition = transform.position;
-        Quaternion savedRotation = transform.rotation;
-        transform.position = Vector3.zero;
-        transform.rotation = Quaternion.identity;
+        //Vector3 savedPosition = transform.position;
+        //Quaternion savedRotation = transform.rotation;
+        //transform.position = Vector3.zero;
+        //transform.rotation = Quaternion.identity;
 
         //Mesh initialisation
         int nbOfTriangle = ( m_meshSubdivision * 6 * 3 ) * 3;
@@ -351,8 +346,8 @@ public class BezierRoad : MonoBehaviour
         //GetComponent<MeshFilter>().mesh = caveMesh;
 
         //local to global 
-        transform.position = savedPosition;
-        transform.rotation = savedRotation;
+        //transform.position = savedPosition;
+        //transform.rotation = savedRotation;
 
         return m_mesh;
 
@@ -362,10 +357,10 @@ public class BezierRoad : MonoBehaviour
     Mesh buildSimpleMesh()
     {
         //global to local
-        Vector3 savedPosition = transform.position;
-        Quaternion savedRotation = transform.rotation;
-        transform.position = Vector3.zero;
-        transform.rotation = Quaternion.identity;
+        //Vector3 savedPosition = transform.position;
+        //Quaternion savedRotation = transform.rotation;
+        //transform.position = Vector3.zero;
+        //transform.rotation = Quaternion.identity;
 
         //Random
         int tmpSeed = Random.seed;
@@ -507,8 +502,8 @@ public class BezierRoad : MonoBehaviour
         //GetComponent<MeshFilter>().mesh = caveMesh;
 
         //local to global 
-        transform.position = savedPosition;
-        transform.rotation = savedRotation;
+        //transform.position = savedPosition;
+        //transform.rotation = savedRotation;
 
         return m_mesh;
 
@@ -546,6 +541,14 @@ public class BezierRoad : MonoBehaviour
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         renderer.sharedMaterial = material;
     }
+    //in case there is road + pavement, give txo material
+    public void setMaterial( Material roadMaterial, Material pavementMaterial)
+    {
+        MeshRenderer renderer = GetComponent<MeshRenderer>();
+        renderer.sharedMaterials[0] = roadMaterial;
+        renderer.sharedMaterials[1] = pavementMaterial;
+    }
+
     /*
     void OnDrawGizmos()
     {

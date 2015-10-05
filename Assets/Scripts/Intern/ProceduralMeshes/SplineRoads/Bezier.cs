@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Bezier : MonoBehaviour 
+public class Bezier : ScriptableObject 
 {
 
     Vector3[] points = new Vector3[4];

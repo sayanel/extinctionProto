@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 public class CompareRoadNodes : IComparer<RoadNode>
 {
@@ -21,6 +20,8 @@ public class RoadGraph : AProceduralMesh
     [SerializeField]
     Material m_roadMaterial;
     [SerializeField]
+    Material m_pavementMaterial;
+    [SerializeField]
     Vector2 m_UVRepetition = new Vector2( 1F, 1F );
     [SerializeField]
     Vector2 m_UVRepetitionPavement = new Vector2( 1F, 1F );
@@ -31,8 +32,6 @@ public class RoadGraph : AProceduralMesh
     [SerializeField]
     float m_roadWidth = 1; // width of generated roads 
     [SerializeField]
-    float m_nodeCurvature = 1;
-    [SerializeField]
     float m_roadEndsWeight = 4; // influence the "weight" of tangents of the roads, at extremities
 
     [Header("data")]
@@ -40,10 +39,6 @@ public class RoadGraph : AProceduralMesh
     List<RoadNode> m_listNodes = new List<RoadNode>();
     [SerializeField]
     List<BezierRoad> m_listRoads = new List<BezierRoad>();
-
-
-
-
 
 
     public override void Generate()
@@ -63,9 +58,8 @@ public class RoadGraph : AProceduralMesh
         foreach( RoadNode node in m_listNodes )
         {
             node.RoadWidth = m_roadWidth;
-            node.Curvature = m_nodeCurvature;
             node.setMaterial( m_roadMaterial );
-            node.Generate();
+            //node.Generate();
         }
     }
 
@@ -121,17 +115,17 @@ public class RoadGraph : AProceduralMesh
         {
             for( int i = 0; i < m_columnCount; i++ )
             {
-                if(i > 0)
-                    linkTwoNodes(sortedIndex[j][i - 1], sortedIndex[j][i], RoadNode.AnchorNames.RIGHT, RoadNode.AnchorNames.LEFT);
+                if(i > 0 && (m_listNodes[sortedIndex[j][i-1]].getAnchor( RoadAnchor.AnchorNames.RIGHT ) != null) && ( m_listNodes[sortedIndex[j][i]].getAnchor( RoadAnchor.AnchorNames.LEFT ) != null ) )
+                    linkTwoNodes(sortedIndex[j][i - 1], sortedIndex[j][i], RoadAnchor.AnchorNames.RIGHT, RoadAnchor.AnchorNames.LEFT);
 
-                if(j > 0)
-                    linkTwoNodes( sortedIndex[j - 1][i], sortedIndex[j][i], RoadNode.AnchorNames.BOTTOM, RoadNode.AnchorNames.TOP );
+                if(j > 0 && ( m_listNodes[sortedIndex[j - 1][i]].getAnchor( RoadAnchor.AnchorNames.BOTTOM ) != null ) && ( m_listNodes[sortedIndex[j][i]].getAnchor( RoadAnchor.AnchorNames.TOP ) != null ) )
+                    linkTwoNodes( sortedIndex[j - 1][i], sortedIndex[j][i], RoadAnchor.AnchorNames.BOTTOM, RoadAnchor.AnchorNames.TOP );
             }
         }
     }
 
     //generate the road between two nodes
-    void linkTwoNodes(int i, int j, RoadNode.AnchorNames iAnchor, RoadNode.AnchorNames jAnchor)
+    void linkTwoNodes(int i, int j, RoadAnchor.AnchorNames iAnchor, RoadAnchor.AnchorNames jAnchor)
     {
         if( i == j )
             return;
@@ -140,7 +134,7 @@ public class RoadGraph : AProceduralMesh
         newSplineObject.transform.SetParent( this.transform );
         BezierRoad newSplineRoad = newSplineObject.AddComponent<BezierRoad>();
 
-        newSplineRoad.init();
+        newSplineRoad.Init();
 
         Vector3 centerI = m_listNodes[i].getCenter().position;
         Vector3 centerJ = m_listNodes[j].getCenter().position;
@@ -161,19 +155,7 @@ public class RoadGraph : AProceduralMesh
 
         m_listRoads.Add( newSplineRoad );
 
-        newSplineRoad.generate();
+        newSplineRoad.Generate();
     }
-
-#if UNITY_EDITOR 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-
-        for( int i = 0; i < m_listNodes.Count; i++ )
-        {
-            Gizmos.DrawWireSphere( m_listNodes[i].transform.position, 3);
-        }
-    }
-#endif
 
 }
