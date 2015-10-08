@@ -5,7 +5,7 @@ using System.Collections;
 public class TopDownCamera : MonoBehaviour 
 {
     [SerializeField]
-    private int m_rightLimit = 790;
+    private int m_rightLimit = 10;
 
     [SerializeField]
     private int m_leftLimit = 10;
@@ -14,7 +14,7 @@ public class TopDownCamera : MonoBehaviour
     private int m_topLimit = 10;
 
     [SerializeField]
-    private int m_bottomLimit = 590;
+    private int m_bottomLimit = 10;
 
     [SerializeField]
     private float m_velocity = 1.0F;
@@ -47,7 +47,7 @@ public class TopDownCamera : MonoBehaviour
         {
             m_direction += new Vector2(m_velocity, 0);
         }
-        if (Input.mousePosition.x > m_leftLimit)
+        if (Input.mousePosition.x < m_leftLimit)
         {
             m_direction += new Vector2(-m_velocity, 0);
         }
@@ -55,7 +55,7 @@ public class TopDownCamera : MonoBehaviour
         {
             m_direction += new Vector2(0, -m_velocity);
         }
-        if (Input.mousePosition.x > m_thisCamera.pixelHeight - m_bottomLimit)
+        if (Input.mousePosition.y > m_thisCamera.pixelHeight - m_bottomLimit)
         {
             m_direction += new Vector2(0, m_velocity);
         }
