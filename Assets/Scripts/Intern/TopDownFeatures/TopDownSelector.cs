@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -38,7 +39,11 @@ public class TopDownSelector : MonoBehaviour
     //endProperty lineColor
 
     [SerializeField]
-    private List<TopDownController> m_selected = new List<TopDownController>();
+    private List<TopDownAgent> m_selected = new List<TopDownAgent>();
+
+    //GUI which will display the current selection
+    [SerializeField]
+    private RectTransform m_GUISelection;
 
     void Awake()
     {
@@ -58,6 +63,17 @@ public class TopDownSelector : MonoBehaviour
         LineColor = m_lineColor;
     }
 
+    //remove the controle we have on each agent og the previous selection. 
+    void clearSelection()
+    {
+        foreach(TopDownAgent agent in m_selected)
+        {
+            agent.IsControllable = false;
+        }
+
+        m_selected.Clear();
+    }
+
     void BeginSelection()
     {
         m_selecting = true;
@@ -68,7 +84,7 @@ public class TopDownSelector : MonoBehaviour
         m_endPoint.x = Input.mousePosition.x;
         m_endPoint.y = Input.mousePosition.y;
 
-        m_selected.Clear();
+        clearSelection();
 
         Ray selectionRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
@@ -115,6 +131,32 @@ public class TopDownSelector : MonoBehaviour
         m_endPoint.y = Input.mousePosition.y;
 
         m_thisTrigger.enabled = false;
+
+        updateGUI();
+    }
+
+    //update the visual of the gui with the new selection.
+    void updateGUI()
+    {
+        // TO COMPLETE
+
+        //clear the gui 
+        int childCount = m_GUISelection.childCount;
+        for(int i = 0; i < childCount; i++)
+        {
+            Destroy(m_GUISelection.GetChild(0).gameObject);
+        }
+
+        //repopulate gui with the first selected item
+        if (m_selected.Count > 0)
+        {
+            GameObject newIconeGameObject = new GameObject();
+            Image newIcone = newIconeGameObject.AddComponent<Image>();
+
+            newIcone.sprite = m_selected[0].getIcone();
+
+            newIconeGameObject.transform.SetParent(m_GUISelection);
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -123,11 +165,11 @@ public class TopDownSelector : MonoBehaviour
         {
             if(other.CompareTag(tag))
             {
-                TopDownController selectedController = other.GetComponent<TopDownController>();
-                if(selectedController != null && !m_selected.Contains(selectedController))
+                TopDownAgent selectedAgent = other.GetComponent<TopDownAgent>();
+                if(selectedAgent != null && !m_selected.Contains(selectedAgent))
                 {
-                    m_selected.Add(selectedController);
-                    selectedController.IsControllable = true;
+                    m_selected.Add(selectedAgent);
+                    selectedAgent.IsControllable = true;
                 }
             }
         }
@@ -139,11 +181,11 @@ public class TopDownSelector : MonoBehaviour
         {
             if (other.CompareTag(tag))
             {
-                TopDownController selectedController = other.GetComponent<TopDownController>();
-                if (selectedController != null)
+                TopDownAgent selectedAgent = other.GetComponent<TopDownAgent>();
+                if (selectedAgent != null)
                 {
-                    m_selected.Remove(selectedController);
-                    selectedController.IsControllable = false;
+                    m_selected.Remove(selectedAgent);
+                    selectedAgent.IsControllable = false;
                 }
             }
         }

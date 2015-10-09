@@ -11,39 +11,24 @@ public class TopDownController : MonoBehaviour
         public string tag;
     }
 
-    //property isControllable
-    //player Inputs can't be received by this until m_isControllable is false 
-    private bool m_isControllable = false;
-
-    public bool IsControllable{
-        get { return m_isControllable; }
-        set { m_isControllable = value; }
-    }
-    //end property isControllable
-
-    //general switches for TopDownEntity
-    private bool m_isCastingSpell = false;
-    private bool m_canAttack = true;
-    private bool m_canMove = true;
-
     //used to store information on the entity the mouse has clicked on (if any)
     MouseTargetInfo m_mouseTargetInfo;
 
-    //the target this component control. If null during instanciation, try to find a ICharacter on this entity
+    //the target this component control. If null during instanciation, try to find a TopDownAgent on this entity
     [SerializeField]
-    private ICharacter m_target;
+    private TopDownAgent m_target;
 
     void Start()
     {
-        //if m_target isn't set up, try to find a ICharacter component on this entity
+        //if m_target isn't set up, try to find a TopDownAgent component on this entity
         if (m_target == null)
-            m_target = GetComponent<ICharacter>();
+            m_target = GetComponent<TopDownAgent>();
     }
 	
 	void Update()
     {
         //update inputs only if this controller is active
-        if(m_isControllable)
+        if(m_target.IsControllable)
         {
             if (Input.GetMouseButtonDown(1))
             {
