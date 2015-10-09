@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class TopDownController : MonoBehaviour
 {
     //small struct to retrieve the information of the entity mouse the mouse has clicked on
@@ -30,21 +29,29 @@ public class TopDownController : MonoBehaviour
     //used to store information on the entity the mouse has clicked on (if any)
     MouseTargetInfo m_mouseTargetInfo;
 
-    //the entity must have a navMeshAgent component
-    private NavMeshAgent m_thisNavMeshAgent;
+    //the target this component control. If null during instanciation, try to find a ICharacter on this entity
+    [SerializeField]
+    private ICharacter m_target;
 
-    void Awake()
+    void Start()
     {
-        m_thisNavMeshAgent = GetComponent<NavMeshAgent>();
+        //if m_target isn't set up, try to find a ICharacter component on this entity
+        if (m_target == null)
+            m_target = GetComponent<ICharacter>();
     }
 	
 	void Update()
     {
-	    if(Input.GetMouseButtonDown(1))
+        //update inputs only if this controller is active
+        if(m_isControllable)
         {
-            if(checkMouseTarget(out m_mouseTargetInfo)) // first step : rayCast and store information on the target
+            if (Input.GetMouseButtonDown(1))
             {
-                m_thisNavMeshAgent.SetDestination(m_mouseTargetInfo.position);
+                if (checkMouseTarget(out m_mouseTargetInfo)) // first step : rayCast and store information on the target
+                {
+                    m_target.move(m_mouseTargetInfo.position);
+                    // m_thisNavMeshAgent.SetDestination(m_mouseTargetInfo.position);
+                }
             }
         }
 	}
