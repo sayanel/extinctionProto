@@ -38,7 +38,7 @@ public class TopDownSelector : MonoBehaviour
     //endProperty lineColor
 
     [SerializeField]
-    private List<GameObject> m_selected = new List<GameObject>();
+    private List<TopDownController> m_selected = new List<TopDownController>();
 
     void Awake()
     {
@@ -123,8 +123,12 @@ public class TopDownSelector : MonoBehaviour
         {
             if(other.CompareTag(tag))
             {
-                if(!m_selected.Contains(other.gameObject))
-                    m_selected.Add(other.gameObject);
+                TopDownController selectedController = other.GetComponent<TopDownController>();
+                if(selectedController != null && !m_selected.Contains(selectedController))
+                {
+                    m_selected.Add(selectedController);
+                    selectedController.IsControllable = true;
+                }
             }
         }
     }
@@ -135,13 +139,19 @@ public class TopDownSelector : MonoBehaviour
         {
             if (other.CompareTag(tag))
             {
-                m_selected.Remove(other.gameObject);
+                TopDownController selectedController = other.GetComponent<TopDownController>();
+                if (selectedController != null)
+                {
+                    m_selected.Remove(selectedController);
+                    selectedController.IsControllable = false;
+                }
             }
         }
     }
 
     void Update()
     {
+        //selection of gameEntities with correct tag
         if(Input.GetMouseButtonDown(0))
         {
             BeginSelection();
@@ -157,6 +167,16 @@ public class TopDownSelector : MonoBehaviour
                 UpdateSelection();
             }
         }
+
+        ////dispatch actions to current selection of gameEntities
+        //if(Input.GetMouseButtonDown(1))
+        //{
+        //    //Fire entities actions : 
+        //    foreach(TopDownController tdController in m_selected)
+        //    {
+        //        tdController.OnInput();
+        //    }
+        //}
     }
 
     public void OnRenderObject()
