@@ -109,4 +109,20 @@ public class RoadNode : MonoBehaviour
         renderer.sharedMaterial = material;
     }
 
+    public void setMaterial( Material roadMaterial, Material pavementMaterial )
+    {
+        MeshRenderer renderer = GetComponent<MeshRenderer>();
+        MeshFilter filter = GetComponent<MeshFilter>();
+        if(filter.sharedMesh.subMeshCount > 1)
+        {
+            Material[] materials = { roadMaterial, pavementMaterial };
+            renderer.sharedMaterials = materials;
+        }
+        else
+        {
+            renderer.sharedMaterial = roadMaterial;
+        }
+        
+    }
+
 }

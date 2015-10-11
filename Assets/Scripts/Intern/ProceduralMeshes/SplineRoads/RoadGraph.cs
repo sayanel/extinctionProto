@@ -33,6 +33,12 @@ public class RoadGraph : AProceduralMesh
     float m_roadWidth = 1; // width of generated roads 
     [SerializeField]
     float m_roadEndsWeight = 4; // influence the "weight" of tangents of the roads, at extremities
+    [SerializeField]
+    [Range( 0, 1 )]
+    float m_pavementWidth = 0.5F; // width of pavements
+    [SerializeField]
+    [Range( 0, 5 )]
+    float m_pavementHeight = 0; //height of pavements
 
     [Header("data")]
 	[SerializeField]
@@ -58,7 +64,10 @@ public class RoadGraph : AProceduralMesh
         foreach( RoadNode node in m_listNodes )
         {
             node.RoadWidth = m_roadWidth;
-            node.setMaterial( m_roadMaterial );
+            if(m_shapeType == BezierRoad.ShapeType.SIMPLE)
+                node.setMaterial( m_roadMaterial );
+            else
+                node.setMaterial( m_roadMaterial, m_pavementMaterial );
             //node.Generate();
         }
     }
@@ -146,16 +155,29 @@ public class RoadGraph : AProceduralMesh
 
         );
 
+        //width
         newSplineRoad.setRoadwidth( m_roadWidth );
+        //subdivision
         newSplineRoad.MeshSubdivision = m_meshSubdivisions;
-        newSplineRoad.setMaterial( m_roadMaterial );
+        //uv repetition
         newSplineRoad.UVRepetition = m_UVRepetition;
         newSplineRoad.UVRepetitionPavement = m_UVRepetitionPavement;
+        //shape type
         newSplineRoad.Shape = m_shapeType;
+        //pavement width
+        newSplineRoad.PavementWidth = m_pavementWidth;
+        //pavement height
+        newSplineRoad.PavementHeight = m_pavementHeight;
 
         m_listRoads.Add( newSplineRoad );
 
         newSplineRoad.Generate();
+
+        //material
+        if( m_shapeType == BezierRoad.ShapeType.SIMPLE )
+            newSplineRoad.setMaterial( m_roadMaterial );
+        else
+            newSplineRoad.setMaterial( m_roadMaterial, m_pavementMaterial );
     }
 
 }

@@ -9,6 +9,7 @@ public class BezierRoad : AProceduralMesh
     [Header( "Components" )]
     [SerializeField]
     Bezier m_spline;
+
     [SerializeField]
     Mesh m_mesh;
 
@@ -31,12 +32,27 @@ public class BezierRoad : AProceduralMesh
         set { m_shapeType = value; }
     }
     // endProperty shapeType
+
+    // property pavementWidth
     [SerializeField]
     [Range( 0, 1 )]
     float m_pavementWidth = 1;
+    public float PavementWidth {
+        get { return m_pavementWidth; }
+        set { m_pavementWidth = value; }
+    }
+    //endProperty pavementWidth
+
+    //property pavementHeight
     [SerializeField]
     [Range( 0, 5 )]
     float m_pavementHeight = 0;
+    public float PavementHeight {
+        get { return m_pavementHeight; }
+        set { m_pavementHeight = value; }
+    }
+    //endProperty pavementHeight
+
     // property meshSubdivision //
     [SerializeField]
     [Range( 1, 10 )]
@@ -47,6 +63,7 @@ public class BezierRoad : AProceduralMesh
         set { m_meshSubdivision = value; }
     }
     // endProperty meshSubdivision //
+
     // property uvRepetition
     [SerializeField]
     Vector2 m_UVRepetition = new Vector2( 1F, 1F );
@@ -69,10 +86,13 @@ public class BezierRoad : AProceduralMesh
     [SerializeField]
     [Range( 0, 10 )]
     int m_seed = 1;
+
     [SerializeField]
     float m_height = 1;
+
     [SerializeField]
     float m_width01 = 1;
+
     [SerializeField]
     float m_width02 = 1;
     
@@ -183,50 +203,50 @@ public class BezierRoad : AProceduralMesh
         }
 
         int T0 = 0, T1 = 0, T2 = 0, T3 = 0, T4 = 0, T5 = 0, T6 = 0, T7 = 0;
-        newVertices[v] = splinePointNormal_A * ( -currentWeight ) + splinePoint_A + new Vector3( decalX * ( roadWeight + currentWeight ), decalY, 0 );
+        newVertices[v] = splinePointNormal_A * ( -currentWeight ) + splinePoint_A + splinePointNormal_A * ( decalX * ( roadWeight + currentWeight )) + decalY*Vector3.up;
         newNormals[v] = Vector3.Cross( splinePointDirection_A, splinePointNormal_A );
         newUV[v] = new Vector2( -uvRepetition.x * 0.45f + 0.5f, p * uvRepetition.y );
         T0 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_A * currentWeight + splinePoint_A + new Vector3( decalX * ( roadWeight + currentWeight ), decalY, 0 );
+        newVertices[v] = splinePointNormal_A * currentWeight + splinePoint_A + splinePointNormal_A * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = Vector3.Cross( splinePointDirection_A, splinePointNormal_A ).normalized;
         newUV[v] = new Vector2( uvRepetition.x * 0.45f + 0.5f, p * uvRepetition.y );
         T1 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_B * currentWeight01 + splinePoint_B + new Vector3( decalX * ( roadWeight01 + currentWeight01 ), decalY, 0 );
+        newVertices[v] = splinePointNormal_B * currentWeight01 + splinePoint_B + splinePointNormal_B * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = Vector3.Cross( splinePointDirection_B, splinePointNormal_B );
         newUV[v] = new Vector2( uvRepetition.x * 0.45f + 0.5f, ( p + 1 ) * uvRepetition.y );
         T2 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_B * ( -currentWeight01 ) + splinePoint_B + new Vector3( decalX * ( roadWeight01 + currentWeight01 ), decalY, 0 );
+        newVertices[v] = splinePointNormal_B * ( -currentWeight01 ) + splinePoint_B + splinePointNormal_B * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = Vector3.Cross( splinePointDirection_B, splinePointNormal_B );
         newUV[v] = new Vector2( -uvRepetition.x * 0.45f + 0.5f, ( p + 1 ) * uvRepetition.y );
         T3 = v;
         v++;
 
         //height
-        newVertices[v] = splinePointNormal_A * ( -currentWeight ) + splinePoint_A - new Vector3( 0, m_height, 0 ) + new Vector3( decalX * ( roadWeight + currentWeight ), decalY, 0 );
+        newVertices[v] = splinePointNormal_A * ( -currentWeight ) + splinePoint_A - new Vector3( 0, m_height, 0 ) + splinePointNormal_A * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = new Vector3( 1, 0, 0 );
         newUV[v] = new Vector2( -uvRepetition.x * 0.5f + 0.5f, p * uvRepetition.y );
         T4 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_A * currentWeight + splinePoint_A - new Vector3( 0, m_height, 0 ) + new Vector3( decalX * ( roadWeight + currentWeight ), decalY, 0 );
+        newVertices[v] = splinePointNormal_A * currentWeight + splinePoint_A - new Vector3( 0, m_height, 0 ) + splinePointNormal_A * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = new Vector3( 1, 0, 0 );
         newUV[v] = new Vector2( uvRepetition.x * 0.5f + 0.5f, p * uvRepetition.y );
         T5 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_B * currentWeight01 + splinePoint_B - new Vector3( 0, m_height, 0 ) + new Vector3( decalX * ( roadWeight01 + currentWeight01 ), decalY, 0 );
+        newVertices[v] = splinePointNormal_B * currentWeight01 + splinePoint_B - new Vector3( 0, m_height, 0 ) + splinePointNormal_B * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = new Vector3( -1, 0, 0 );
         newUV[v] = new Vector2( uvRepetition.x * 0.5f + 0.5f, ( p + 1 ) * uvRepetition.y );
         T6 = v;
         v++;
 
-        newVertices[v] = splinePointNormal_B * ( -currentWeight01 ) + splinePoint_B - new Vector3( 0, m_height, 0 ) + new Vector3( decalX * ( roadWeight01 + currentWeight01 ), decalY, 0 );
+        newVertices[v] = splinePointNormal_B * ( -currentWeight01 ) + splinePoint_B - new Vector3( 0, m_height, 0 ) + splinePointNormal_B * ( decalX * ( roadWeight + currentWeight ) ) + decalY * Vector3.up;
         newNormals[v] = new Vector3( -1, 0, 0 );
         newUV[v] = new Vector2( -uvRepetition.x * 0.5f + 0.5f, ( p + 1 ) * uvRepetition.y );
         T7 = v;
@@ -309,7 +329,7 @@ public class BezierRoad : AProceduralMesh
             {
                 for( int i = 0; i < nbOfTriangle / 3; ) //i : triangle index
                 {
-                    generateRoad( ref i, ref p, ref c, ref v, ref a, ref newVertices, ref newNormals, ref newUV, ref newTriangles02, subMesh, -0.9F, m_pavementHeight );
+                    generateRoad( ref i, ref p, ref c, ref v, ref a, ref newVertices, ref newNormals, ref newUV, ref newTriangles02, subMesh, -1, m_pavementHeight );
                 }
                 p = 0;
                 c = 1;
@@ -320,7 +340,7 @@ public class BezierRoad : AProceduralMesh
             {
                 for( int i = 0; i < nbOfTriangle / 3; ) //i : triangle index
                 {
-                    generateRoad( ref i, ref p, ref c, ref v, ref a, ref newVertices, ref newNormals, ref newUV, ref newTriangles03, subMesh, 0.9F, m_pavementHeight );
+                    generateRoad( ref i, ref p, ref c, ref v, ref a, ref newVertices, ref newNormals, ref newUV, ref newTriangles03, subMesh, 1, m_pavementHeight );
                 }
                 p = 0;
                 c = 1;
@@ -545,8 +565,11 @@ public class BezierRoad : AProceduralMesh
     public void setMaterial( Material roadMaterial, Material pavementMaterial)
     {
         MeshRenderer renderer = GetComponent<MeshRenderer>();
-        renderer.sharedMaterials[0] = roadMaterial;
-        renderer.sharedMaterials[1] = pavementMaterial;
+        Material[] materials = { roadMaterial, pavementMaterial, pavementMaterial };
+        renderer.sharedMaterials = materials;
+        //renderer.sharedMaterials [0] = roadMaterial;
+        //renderer.sharedMaterials[1] = pavementMaterial;
+        //renderer.sharedMaterials[2] = pavementMaterial;
     }
 
     /*
