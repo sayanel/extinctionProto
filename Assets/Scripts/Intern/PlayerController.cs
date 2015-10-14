@@ -16,19 +16,26 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 moveDirection = Vector3.zero;
     private CharacterController controller;
 
+    private Animator animator;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
 
         if ( controller == null ) Debug.LogWarning( "WARNING ! No Character controller is attached to your game object" );
     }
 
 	void Update() 
     {
-        if ( controller == null ) return;
+        float verticalMove = Input.GetAxis( "Vertical" );
+        float horizontalMove = Input.GetAxis( "Horizontal" );
 
         //Handle Vertical and Horizontal Direction
-        moveDirection = new Vector3( Input.GetAxis( "Horizontal" ), 0, Input.GetAxis( "Vertical" ) );
+        moveDirection.x = horizontalMove;
+        moveDirection.y = 0;
+        moveDirection.z = verticalMove;
+
         moveDirection = transform.TransformDirection( moveDirection );
         moveDirection *= speed;
 
@@ -49,6 +56,11 @@ public class PlayerController : MonoBehaviour {
 
 		// Move the controller
 		controller.Move(moveDirection * Time.deltaTime);
+
+        //handle Animation
+        bool running = horizontalMove != 0f || verticalMove != 0f;
+        animator.SetBool("isRunning", running);
+
 	}
 
 }
