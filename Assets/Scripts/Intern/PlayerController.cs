@@ -2,15 +2,19 @@
 using System.Collections;
 using System;
 
+
 /// <summary>
-/// This struct is used to know what is the caracter state
-/// It it used in the Update() function, when the Player uses some inputs.
+/// Enum which describes the character's state, 
+/// mainly for the animator
 /// </summary>
-struct CharacterState
+public enum CharacterState
 {
-    float running;
-    float strating;
-    bool jumping;
+    IDLE = 0,
+    JUMPING = 1,
+    RUN = 2,
+    RUN_BACK = 3,
+    STRATE_LEFT = 4,
+    STRATE_RIGHT = 5
 }
 
 /// <summary>
@@ -19,7 +23,6 @@ struct CharacterState
 /// Your Game Object must have a Character Controller Component.
 /// </summary>
 public class PlayerController : MonoBehaviour {
-
 
     //-------------- Public --------------
 
@@ -36,6 +39,8 @@ public class PlayerController : MonoBehaviour {
     public float maxRotY = 60F;
 
     //-------------- Private --------------
+
+    private CharacterState currentState = CharacterState.IDLE;
 
     private float xSpeed = 0;
     private float ySpeed = 0;
@@ -55,8 +60,15 @@ public class PlayerController : MonoBehaviour {
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
 
-        if ( controller == null ) Debug.LogWarning( "WARNING ! No Character controller is attached to your game object" );
-        if ( animator == null ) Debug.LogWarning( "WARNING ! No animator is attached to your game object" );
+        if ( controller == null )
+        {
+            throw new MissingComponentException( "No Character controller is attached to your game object" );
+        }
+
+        if ( animator == null )
+        {
+            throw new MissingComponentException( "No animator is attached to your game object" );
+        }
     }
 
 	void Update() 
@@ -70,7 +82,6 @@ public class PlayerController : MonoBehaviour {
         ///Set the proper character animation according to his state
         Animate();
 
-        
 	}
 
     /// <summary>
@@ -141,13 +152,34 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void Animate()
     {
-        bool jumping = !controller.isGrounded;
+        CharacterState state = GetState();
 
-        animator.SetInteger( "isRunning", Math.Sign( zSpeed ) );
-        animator.SetInteger( "isStrating", Math.Sign( xSpeed ) );
-        animator.SetBool( "isJumping", jumping );
+        if(!state.Equals(currentState))
+        {
+            currentState = state;
+            animator.SetInteger( "State", (int)currentState );
+        }
     }
 
-    
- 
+    /// <summary>
+    /// Check the current state according to the player's input
+    /// </summary>
+    /// <returns>An enum of the current state</returns>
+    CharacterState GetState()
+    {
+        if ( !controller.isGrounded )
+        {
+            return CharacterState.JUMPING;          
+        }
+
+        if ( Math.Sign( zSpeed ) > 0 ) return CharacterState.RUN;
+
+        if ( Math.Sign( zSpeed ) < 0 ) return CharacterState.RUN_BACK;
+
+        if ( Math.Sign( xSpeed ) < 0 ) return CharacterState.STRATE_LEFT;
+
+        if ( Math.Sign( xSpeed ) > 0 ) return CharacterState.STRATE_RIGHT;
+
+        return CharacterState.IDLE;
+    }
 }
