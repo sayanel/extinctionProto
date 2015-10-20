@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour {
 
     //-------------- Public --------------
 
+    public Weapon weapon;
+
     public bool m_isControllable = false;
 
 	public float m_speed = 6.0f;
@@ -149,6 +151,10 @@ public class PlayerController : MonoBehaviour {
         m_aiming = false;
 
         if ( Input.GetMouseButton( 1 ) ) m_aiming = true;
+        if ( Input.GetMouseButton( 0 ) )
+        {
+            weapon.Fire();
+        }
     }
 
     /// <summary>

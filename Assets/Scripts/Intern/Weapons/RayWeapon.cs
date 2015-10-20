@@ -40,9 +40,12 @@ public class RayWeapon : Weapon
         if( (Time.time - m_previousTime) >= m_fireRate )
         {
             RaycastHit hitInfo;
+
+            //Draw debug ray
+            //Debug.DrawRay( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward * 30, new Color( 1, 0, 0 ), 30f );
+
             if( Physics.Raycast( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward, out hitInfo, m_rayLength, LayerMask.GetMask( m_targetTag ) ) )
             {
-                Debug.Log( "ray !!! " );
                 ITargetable target = hitInfo.transform.GetComponent<ITargetable>();
 
                 if( target != null )
