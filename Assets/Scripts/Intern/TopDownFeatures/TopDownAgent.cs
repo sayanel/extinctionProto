@@ -8,6 +8,9 @@ using System;
 [RequireComponent(typeof(NavMeshAgent))]
 public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
 {
+    //tasks the TopDownAgent can do
+    public enum TopDownBehaviour { IDLE, ATTACK, MOVE };
+
     //property isControllable
     //player Inputs can't be received by this until m_isControllable is false 
     private bool m_isControllable = false;
@@ -40,6 +43,14 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
 
     [SerializeField]
     private List<Weapon> m_weapons = new List<Weapon>();
+
+    // the current task this agent is doing
+    private TopDownBehaviour m_behaviour = TopDownBehaviour.IDLE;
+    public TopDownBehaviour Behaviour
+    {
+        get { return m_behaviour; }
+        set { m_behaviour = value; }
+    }
 
     void Awake()
     {

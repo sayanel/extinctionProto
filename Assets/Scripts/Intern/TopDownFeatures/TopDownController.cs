@@ -56,6 +56,8 @@ public class TopDownController : MonoBehaviour
             {
                 if (checkMouseTarget(out m_mouseTargetInfo)) // first step : rayCast and store information on the target
                 {
+                    Debug.Log( "mouse encounter a target with tag : " + m_mouseTargetInfo.tag.ToString() );
+
                     if(m_mouseTargetInfo.tag == "Target")
                     {
                         //store a pointer to the current target
@@ -75,22 +77,46 @@ public class TopDownController : MonoBehaviour
 
     void MoveAndAttack()
     {
+        StopAllCoroutines();
+
+        //change agent task 
+        m_agent.Behaviour = TopDownAgent.TopDownBehaviour.ATTACK;
+
+        //perform the task
         StartCoroutine( MoveAndAttackRoutine() );
+    }
+
+    void Idle()
+    {
+        StopAllCoroutines();
+
+        //change agent task
+        m_agent.Behaviour = TopDownAgent.TopDownBehaviour.IDLE;
+
+        //perform the task
+        // TODO
     }
 
     IEnumerator MoveAndAttackRoutine()
     {
-        //Check if agent can attack
-        if( m_agent.CanAttack( m_currentTarget ) )
+        while(m_agent.Behaviour == TopDownAgent.TopDownBehaviour.ATTACK)
         {
-            m_agent.attack(m_currentTarget);
-        }
-        else
-        {
-            m_agent.move( m_currentTarget.transform.position );
-        }
+            if(!m_currentTarget.isAlive()) // is the target already dead ? 
+            {
+                Idle();
+            }
+            //Check if agent can attack
+            else if( m_agent.CanAttack( m_currentTarget ) )
+            {
+                m_agent.attack( m_currentTarget );
+            }
+            else
+            {
+                m_agent.move( m_currentTarget.transform.position );
+            }
 
-        yield return new WaitForSeconds( m_iaDelay );
+            yield return new WaitForSeconds( m_iaDelay );
+        }
     }
 
     bool checkMouseTarget(out MouseTargetInfo info)
