@@ -31,7 +31,7 @@ public class RandomConnectionMaker : Photon.PunBehaviour{
     /// </summary>
     /// <param name="codeAndMsg"></param>
     public override void OnPhotonRandomJoinFailed(object[] codeAndMsg) {
-        int errorCode = (int) codeAndMsg[0];
+        short errorCode = (short)codeAndMsg[0];
         string errorMsg = codeAndMsg[1].ToString();
         Debug.Log(errorMsg);
 
@@ -61,5 +61,7 @@ public class RandomConnectionMaker : Photon.PunBehaviour{
             Debug.Log(e);
             return;
         }
+        prefab.GetComponent<PlayerController>().m_isControllable = true;
+        prefab.GetComponentInChildren<Camera>().enabled = true;
     }
 }
