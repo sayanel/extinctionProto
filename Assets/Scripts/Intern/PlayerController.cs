@@ -26,7 +26,10 @@ public class PlayerController : MonoBehaviour {
 
     //-------------- Public --------------
 
+    public bool isControllable = false;
+
 	public float speed = 6.0f;
+    public float accurateSpeedReduction = 0.1f;
 	public float jumpSpeed = 8.0f;
 	public float gravity = 20.0f;
     public float mouseSensivity = 5.0f;
@@ -38,18 +41,20 @@ public class PlayerController : MonoBehaviour {
     public float minRotY = -60F;
     public float maxRotY = 60F;
 
+    public bool isAiming { get { return aiming; } }
+
+    public CharacterState state { get { return currentState; } }
+
     //-------------- Private --------------
 
     private CharacterState currentState = CharacterState.IDLE;
+    private bool aiming;
 
     private float xSpeed = 0;
     private float ySpeed = 0;
     private float zSpeed = 0;
-
     private Vector3 moveDirection = Vector3.zero;
-
-    public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
-   
+    public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }  
     private float rotationY = 0F;
     
     private CharacterController controller;
@@ -73,11 +78,18 @@ public class PlayerController : MonoBehaviour {
 
 	void Update() 
     {
-        //Move The character following the inputs
-        Move();
+        // Network Setting
+        if ( isControllable )
+        {
+            //Handle Specials commands such as aiming, etc.
+            SpecialMove();
 
-        //Change the character's orientation following the mouse
-        Rotate();
+            //Move The character following the inputs
+            Move();
+
+            //Change the character's orientation following the mouse
+            Rotate();
+        }
 
         ///Set the proper character animation according to his state
         Animate();
@@ -101,6 +113,11 @@ public class PlayerController : MonoBehaviour {
         moveDirection = transform.TransformDirection( moveDirection );
         moveDirection *= speed;
 
+        if ( aiming )
+        {
+            moveDirection *= accurateSpeedReduction;
+        }
+
         //Handle Jumping/Not Jumping cases
         if ( controller.isGrounded )
         {
@@ -118,6 +135,13 @@ public class PlayerController : MonoBehaviour {
 
         // Move the controller
         controller.Move( moveDirection * Time.deltaTime );
+    }
+
+    void SpecialMove()
+    {
+        aiming = false;
+
+        if ( Input.GetMouseButton( 1 ) ) aiming = true;
     }
 
     /// <summary>
@@ -152,26 +176,20 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void Animate()
     {
-        CharacterState state = GetState();
+        currentState = isControllable ? GetState() : currentState;
 
-        //if(!state.Equals(currentState))
-        //{
-            currentState = state;
-            animator.SetInteger( "State", (int)currentState );
-        //}
+        animator.SetInteger( "State", (int)currentState );
+        
     }
 
     /// <summary>
     /// Check the current state according to the player's input
     /// </summary>
     /// <returns>An enum of the current state</returns>
-    CharacterState GetState()
+    public CharacterState GetState()
     {
-        if ( !controller.isGrounded )
-        {
-            return CharacterState.JUMPING;          
-        }
-
+        if ( !controller.isGrounded ) return CharacterState.JUMPING;          
+      
         if ( Math.Sign( zSpeed ) > 0 ) return CharacterState.RUN;
 
         if ( Math.Sign( zSpeed ) < 0 ) return CharacterState.RUN_BACK;
