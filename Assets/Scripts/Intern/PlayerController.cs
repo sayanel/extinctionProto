@@ -154,11 +154,11 @@ public class PlayerController : MonoBehaviour {
     {
         CharacterState state = GetState();
 
-        if(!state.Equals(currentState))
-        {
+        //if(!state.Equals(currentState))
+        //{
             currentState = state;
             animator.SetInteger( "State", (int)currentState );
-        }
+        //}
     }
 
     /// <summary>
