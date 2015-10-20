@@ -14,11 +14,15 @@ public class ProjectileWeapon : Weapon
     [SerializeField]
     protected float m_velocity = 10;
 
-    //the position from which the projectile will spawn
+    /// <summary>
+    /// the position from which the projectile will spawn 
+    /// </summary>
     [SerializeField]
     protected Transform m_anchor;
 
-    //if an entity has one of these tags, the projectile can hit the entity.
+    /// <summary>
+    /// if an entity has one of these tags, the projectile can hit the entity.
+    /// </summary>
     [SerializeField]
     protected string[] m_targetTag;
 
