@@ -50,7 +50,10 @@ public class PlayerController : MonoBehaviour {
 
     public bool isAiming { get { return m_aiming; } }
 
-    public CharacterState state { get { return m_currentState; } }
+    public CharacterState state {
+        get { return m_currentState; }
+        set { m_currentState = value; }
+    }
 
     //-------------- Private --------------
 
