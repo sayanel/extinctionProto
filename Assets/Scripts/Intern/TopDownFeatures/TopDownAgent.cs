@@ -12,7 +12,7 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
     //player Inputs can't be received by this until m_isControllable is false 
     private bool m_isControllable = false;
 
-    public bool IsControllable
+    public bool isControllable
     {
         get { return m_isControllable; }
         set { m_isControllable = value; }
@@ -57,7 +57,7 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         return true;
     }
 
-    //return true if this agent can directly attack the target 
+    //return true if this agent can directly attack the target
     public bool CanAttack(Target target)
     {
         if( m_weapons.Count == 0 )
@@ -68,7 +68,7 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         float distanceToTarget = Vector3.Distance( transform.position, target.transform.position );
         foreach(Weapon weapon in m_weapons)
         {
-            if(weapon.Range < distanceToTarget)
+            if(weapon.getRange() < distanceToTarget)
                 return false;
         }
 

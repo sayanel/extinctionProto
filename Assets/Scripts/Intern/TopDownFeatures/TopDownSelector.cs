@@ -27,7 +27,7 @@ public class TopDownSelector : MonoBehaviour
     //property lineColor
     [SerializeField]
     private Color m_lineColor = Color.green;
-    public Color LineColor{
+    public Color lineColor{
         get{
             return m_lineColor;
         }
@@ -60,7 +60,7 @@ public class TopDownSelector : MonoBehaviour
     void Start()
     {
         transform.rotation = Quaternion.identity;
-        LineColor = m_lineColor;
+        lineColor = m_lineColor;
     }
 
     //remove the controle we have on each agent og the previous selection. 
@@ -68,7 +68,7 @@ public class TopDownSelector : MonoBehaviour
     {
         foreach(TopDownAgent agent in m_selected)
         {
-            agent.IsControllable = false;
+            agent.isControllable = false;
         }
 
         m_selected.Clear();
@@ -169,7 +169,7 @@ public class TopDownSelector : MonoBehaviour
                 if(selectedAgent != null && !m_selected.Contains(selectedAgent))
                 {
                     m_selected.Add(selectedAgent);
-                    selectedAgent.IsControllable = true;
+                    selectedAgent.isControllable = true;
                 }
             }
         }
@@ -185,7 +185,7 @@ public class TopDownSelector : MonoBehaviour
                 if (selectedAgent != null)
                 {
                     m_selected.Remove(selectedAgent);
-                    selectedAgent.IsControllable = false;
+                    selectedAgent.isControllable = false;
                 }
             }
         }

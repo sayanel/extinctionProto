@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TopDownController : MonoBehaviour
 {
@@ -22,9 +23,22 @@ public class TopDownController : MonoBehaviour
     [SerializeField]
     private Target m_currentTarget;
 
+    //all potential targets (targets which are )
+    private List<Target> m_potentialTargets;
+
     //delay between two decisions taken by the ia
     [SerializeField]
     private float m_iaDelay;
+
+    public void addPotentialTarget(Target target)
+    {
+        m_potentialTargets.Add(target);
+    }
+
+    public void removePotentialTarget(Target target)
+    {
+        m_potentialTargets.Remove( target );
+    }
 
     void Start()
     {
@@ -36,7 +50,7 @@ public class TopDownController : MonoBehaviour
 	void Update()
     {
         //update inputs only if this controller is active
-        if(m_agent.IsControllable)
+        if(m_agent.isControllable)
         {
             if (Input.GetMouseButtonDown(1))
             {
