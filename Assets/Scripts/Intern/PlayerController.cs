@@ -17,6 +17,13 @@ public enum CharacterState
     STRATE_RIGHT = 5
 }
 
+public enum RotationAxes
+{ 
+    MouseXAndY = 0, 
+    MouseX = 1, 
+    MouseY = 2 
+} 
+
 /// <summary>
 /// This Class handles the player's input to make the character move.
 /// It also choose which animation to set
@@ -26,51 +33,51 @@ public class PlayerController : MonoBehaviour {
 
     //-------------- Public --------------
 
-    public bool isControllable = false;
+    public bool m_isControllable = false;
 
-	public float speed = 6.0f;
-    public float accurateSpeedReduction = 0.1f;
-	public float jumpSpeed = 8.0f;
-	public float gravity = 20.0f;
-    public float mouseSensivity = 5.0f;
+	public float m_speed = 6.0f;
+    public float m_accurateSpeedReduction = 0.1f;
+	public float m_jumpSpeed = 8.0f;
+	public float m_gravity = 20.0f;
+    public float m_mouseSensivity = 5.0f;
 
-    public RotationAxes axes = RotationAxes.MouseXAndY;
+    public RotationAxes m_axes = RotationAxes.MouseXAndY;
 
-    public float minRotX = -360F;
-    public float maxRotX = 360F;
-    public float minRotY = -60F;
-    public float maxRotY = 60F;
+    public float m_minRotX = -360F;
+    public float m_maxRotX = 360F;
+    public float m_minRotY = -60F;
+    public float m_maxRotY = 60F;
 
-    public bool isAiming { get { return aiming; } }
+    public bool isAiming { get { return m_aiming; } }
 
-    public CharacterState state { get { return currentState; } }
+    public CharacterState state { get { return m_currentState; } }
 
     //-------------- Private --------------
 
-    private CharacterState currentState = CharacterState.IDLE;
-    private bool aiming;
+    private CharacterState m_currentState = CharacterState.IDLE;
+    private bool m_aiming;
 
-    private float xSpeed = 0;
-    private float ySpeed = 0;
-    private float zSpeed = 0;
-    private Vector3 moveDirection = Vector3.zero;
-    public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }  
-    private float rotationY = 0F;
+    private float m_xSpeed = 0;
+    private float m_ySpeed = 0;
+    private float m_zSpeed = 0;
+    private Vector3 m_moveDirection = Vector3.zero;
+     
+    private float m_rotationY = 0F;
     
-    private CharacterController controller;
-    private Animator animator;
+    private CharacterController m_controller;
+    private Animator m_animator;
 
     void Start()
     {
-        controller = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+        m_controller = GetComponent<CharacterController>();
+        m_animator = GetComponent<Animator>();
 
-        if ( controller == null )
+        if ( m_controller == null )
         {
             throw new MissingComponentException( "No Character controller is attached to your game object" );
         }
 
-        if ( animator == null )
+        if ( m_animator == null )
         {
             throw new MissingComponentException( "No animator is attached to your game object" );
         }
@@ -79,7 +86,7 @@ public class PlayerController : MonoBehaviour {
 	void Update() 
     {
         // Network Setting
-        if ( isControllable )
+        if ( m_isControllable )
         {
             //Handle Specials commands such as aiming, etc.
             SpecialMove();
@@ -102,46 +109,46 @@ public class PlayerController : MonoBehaviour {
     void Move()
     {
         //Get Input values
-        xSpeed = Input.GetAxis( "Horizontal" );
-        zSpeed = Input.GetAxis( "Vertical" );
+        m_xSpeed = Input.GetAxis( "Horizontal" );
+        m_zSpeed = Input.GetAxis( "Vertical" );
 
         //Handle Vertical and Horizontal Direction
-        moveDirection.x = xSpeed;
-        moveDirection.y = 0;
-        moveDirection.z = zSpeed;
+        m_moveDirection.x = m_xSpeed;
+        m_moveDirection.y = 0;
+        m_moveDirection.z = m_zSpeed;
 
-        moveDirection = transform.TransformDirection( moveDirection );
-        moveDirection *= speed;
+        m_moveDirection = transform.TransformDirection( m_moveDirection );
+        m_moveDirection *= m_speed;
 
-        if ( aiming )
+        if ( m_aiming )
         {
-            moveDirection *= accurateSpeedReduction;
+            m_moveDirection *= m_accurateSpeedReduction;
         }
 
         //Handle Jumping/Not Jumping cases
-        if ( controller.isGrounded )
+        if ( m_controller.isGrounded )
         {
-            ySpeed = 0;
+            m_ySpeed = 0;
 
             if ( Input.GetButton( "Jump" ) )
             {
-                ySpeed = jumpSpeed;
+                m_ySpeed = m_jumpSpeed;
             }
         }
 
         // Apply gravity on vertical speed
-        ySpeed -= gravity * Time.deltaTime;
-        moveDirection.y = ySpeed;
+        m_ySpeed -= m_gravity * Time.deltaTime;
+        m_moveDirection.y = m_ySpeed;
 
         // Move the controller
-        controller.Move( moveDirection * Time.deltaTime );
+        m_controller.Move( m_moveDirection * Time.deltaTime );
     }
 
     void SpecialMove()
     {
-        aiming = false;
+        m_aiming = false;
 
-        if ( Input.GetMouseButton( 1 ) ) aiming = true;
+        if ( Input.GetMouseButton( 1 ) ) m_aiming = true;
     }
 
     /// <summary>
@@ -149,25 +156,25 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void Rotate()
     {
-        if ( axes == RotationAxes.MouseXAndY )
+        if ( m_axes == RotationAxes.MouseXAndY )
         {
-            float rotationX = transform.localEulerAngles.y + Input.GetAxis( "Mouse X" ) * mouseSensivity;
+            float rotationX = transform.localEulerAngles.y + Input.GetAxis( "Mouse X" ) * m_mouseSensivity;
 
-            rotationY += Input.GetAxis( "Mouse Y" ) * mouseSensivity;
-            rotationY = Mathf.Clamp( rotationY, minRotY, maxRotY );
+            m_rotationY += Input.GetAxis( "Mouse Y" ) * m_mouseSensivity;
+            m_rotationY = Mathf.Clamp( m_rotationY, m_minRotY, m_maxRotY );
 
-            transform.localEulerAngles = new Vector3( -rotationY, rotationX, 0 );
+            transform.localEulerAngles = new Vector3( -m_rotationY, rotationX, 0 );
         }
-        else if ( axes == RotationAxes.MouseX )
+        else if ( m_axes == RotationAxes.MouseX )
         {
-            transform.Rotate( 0, Input.GetAxis( "Mouse X" ) * mouseSensivity, 0 );
+            transform.Rotate( 0, Input.GetAxis( "Mouse X" ) * m_mouseSensivity, 0 );
         }
         else
         {
-            rotationY += Input.GetAxis( "Mouse Y" ) * mouseSensivity;
-            rotationY = Mathf.Clamp( rotationY, minRotY, maxRotY );
+            m_rotationY += Input.GetAxis( "Mouse Y" ) * m_mouseSensivity;
+            m_rotationY = Mathf.Clamp( m_rotationY, m_minRotY, m_maxRotY );
 
-            transform.localEulerAngles = new Vector3( -rotationY, transform.localEulerAngles.y, 0 );
+            transform.localEulerAngles = new Vector3( -m_rotationY, transform.localEulerAngles.y, 0 );
         }
     }
 
@@ -176,9 +183,9 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void Animate()
     {
-        currentState = isControllable ? GetState() : currentState;
+        m_currentState = m_isControllable ? GetState() : m_currentState;
 
-        animator.SetInteger( "State", (int)currentState );
+        m_animator.SetInteger( "State", (int)m_currentState );
         
     }
 
@@ -188,15 +195,15 @@ public class PlayerController : MonoBehaviour {
     /// <returns>An enum of the current state</returns>
     public CharacterState GetState()
     {
-        if ( !controller.isGrounded ) return CharacterState.JUMPING;          
+        if ( !m_controller.isGrounded ) return CharacterState.JUMPING;          
       
-        if ( Math.Sign( zSpeed ) > 0 ) return CharacterState.RUN;
+        if ( Math.Sign( m_zSpeed ) > 0 ) return CharacterState.RUN;
 
-        if ( Math.Sign( zSpeed ) < 0 ) return CharacterState.RUN_BACK;
+        if ( Math.Sign( m_zSpeed ) < 0 ) return CharacterState.RUN_BACK;
 
-        if ( Math.Sign( xSpeed ) < 0 ) return CharacterState.STRATE_LEFT;
+        if ( Math.Sign( m_xSpeed ) < 0 ) return CharacterState.STRATE_LEFT;
 
-        if ( Math.Sign( xSpeed ) > 0 ) return CharacterState.STRATE_RIGHT;
+        if ( Math.Sign( m_xSpeed ) > 0 ) return CharacterState.STRATE_RIGHT;
 
         return CharacterState.IDLE;
     }

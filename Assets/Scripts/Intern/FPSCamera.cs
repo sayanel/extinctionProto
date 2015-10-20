@@ -3,57 +3,57 @@ using System.Collections;
 
 public class FPSCamera : MonoBehaviour {
 
-    public PlayerController playerController;
+    public PlayerController m_playerController;
 
-    public float normalFOV = 60;
-    public float accurateFOV = 30;
-    public float zoomTime = 1f;
+    public float m_normalFOV = 60;
+    public float m_accurateFOV = 30;
+    public float m_zoomTime = 1f;
 
-    private float FOV;
+    private float m_FOV;
 
-    private bool zoomingIn = false;
-    private bool zoomingOut = false;
+    private bool m_zoomingIn = false;
+    private bool m_zoomingOut = false;
    
-    private Camera camera;
+    private Camera m_camera;
 
 	// Use this for initialization
 	void Start () {
-        FOV = normalFOV;
-        camera = GetComponent<Camera>();
+        m_FOV = m_normalFOV;
+        m_camera = GetComponent<Camera>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        if ( playerController.isAiming && FOV > accurateFOV  && !zoomingIn)
+        if ( m_playerController.isAiming && m_FOV > m_accurateFOV  && !m_zoomingIn)
         {
-            zoomingIn = true;
+            m_zoomingIn = true;
             StartCoroutine( "ZoomIn" );
         }
 
-        if ( !playerController.isAiming && FOV < normalFOV && !zoomingOut )
+        if ( !m_playerController.isAiming && m_FOV < m_normalFOV && !m_zoomingOut )
         {
-            zoomingOut = true;
+            m_zoomingOut = true;
             StartCoroutine( "ZoomOut" );
         }
 
-        camera.fieldOfView = FOV;
+        m_camera.fieldOfView = m_FOV;
 	}
 
     IEnumerator ZoomIn()
     {
         int i = 0;
 
-        while ( FOV > accurateFOV )
+        while ( m_FOV > m_accurateFOV )
         {
-            if ( !playerController.isAiming ) break;
-            float t = ( i * 0.01f ) / zoomTime;
-            FOV = Mathf.Lerp( FOV, accurateFOV, t );
+            if ( !m_playerController.isAiming ) break;
+            float t = ( i * 0.01f ) / m_zoomTime;
+            m_FOV = Mathf.Lerp( m_FOV, m_accurateFOV, t );
             i++;
             yield return new WaitForSeconds(0.01f);
         }
 
-        zoomingIn = false;
+        m_zoomingIn = false;
 
     }
 
@@ -61,17 +61,17 @@ public class FPSCamera : MonoBehaviour {
     {
         int i = 0;
 
-        while ( FOV < normalFOV )
+        while ( m_FOV < m_normalFOV )
         {
-            if ( playerController.isAiming ) break;
+            if ( m_playerController.isAiming ) break;
 
-            float t = ( i * 0.01f ) / zoomTime;
-            FOV = Mathf.Lerp( FOV, normalFOV, t );
+            float t = ( i * 0.01f ) / m_zoomTime;
+            m_FOV = Mathf.Lerp( m_FOV, m_normalFOV, t );
             i++;
             yield return new WaitForSeconds( 0.01f );
         }
 
-        zoomingOut = false;        
+        m_zoomingOut = false;        
 
     }
 

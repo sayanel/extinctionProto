@@ -3,15 +3,15 @@ using System.Collections;
 
 public class TargetMarker : MonoBehaviour {
 
-    public Texture2D accurateMarker;
-    public Texture2D normalMarker;
-    public PlayerController playerController;
+    public Texture2D m_accurateMarker;
+    public Texture2D m_normalMarker;
+    public PlayerController m_playerController;
 
-    private Rect position;
+    private Rect m_position;
 
 	// Use this for initialization
 	void Start () {
-        position = new Rect( Screen.width / 2 - 16, Screen.height / 2 - 16, 32, 32 );
+        m_position = new Rect( Screen.width / 2 - 16, Screen.height / 2 - 16, 32, 32 );
 	}
 	
 	// Update is called once per frame
@@ -21,6 +21,6 @@ public class TargetMarker : MonoBehaviour {
 
     void OnGUI()
     {
-        GUI.DrawTexture( position, playerController.isAiming ? accurateMarker : normalMarker );
+        GUI.DrawTexture( m_position, m_playerController.isAiming ? m_accurateMarker : m_normalMarker );
     }
 }
