@@ -16,30 +16,68 @@ public class TopDownController : MonoBehaviour
 
     //the target this component control. If null during instanciation, try to find a TopDownAgent on this entity
     [SerializeField]
-    private TopDownAgent m_target;
+    private TopDownAgent m_agent;
+
+    //the right click target
+    [SerializeField]
+    private Target m_currentTarget;
+
+    //delay between two decisions taken by the ia
+    [SerializeField]
+    private float m_iaDelay;
 
     void Start()
     {
         //if m_target isn't set up, try to find a TopDownAgent component on this entity
-        if (m_target == null)
-            m_target = GetComponent<TopDownAgent>();
+        if (m_agent == null)
+            m_agent = GetComponent<TopDownAgent>();
     }
 	
 	void Update()
     {
         //update inputs only if this controller is active
-        if(m_target.IsControllable)
+        if(m_agent.IsControllable)
         {
             if (Input.GetMouseButtonDown(1))
             {
                 if (checkMouseTarget(out m_mouseTargetInfo)) // first step : rayCast and store information on the target
                 {
-                    m_target.move(m_mouseTargetInfo.position);
+                    if(m_mouseTargetInfo.tag == "Target")
+                    {
+                        //store a pointer to the current target
+                        m_currentTarget = m_mouseTargetInfo.gameObject.GetComponent<Target>();
+
+                        //launch a coroutine for attack behaviour
+                        if(m_currentTarget != null)
+                            MoveAndAttack();
+                    }
+                    else
+                        m_agent.move(m_mouseTargetInfo.position);
                     // m_thisNavMeshAgent.SetDestination(m_mouseTargetInfo.position);
                 }
             }
         }
 	}
+
+    void MoveAndAttack()
+    {
+        StartCoroutine( MoveAndAttackRoutine() );
+    }
+
+    IEnumerator MoveAndAttackRoutine()
+    {
+        //Check if agent can attack
+        if( m_agent.CanAttack( m_currentTarget ) )
+        {
+            m_agent.attack(m_currentTarget);
+        }
+        else
+        {
+            m_agent.move( m_currentTarget.transform.position );
+        }
+
+        yield return new WaitForSeconds( m_iaDelay );
+    }
 
     bool checkMouseTarget(out MouseTargetInfo info)
     {

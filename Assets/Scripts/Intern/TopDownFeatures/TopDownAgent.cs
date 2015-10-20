@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 //Robot implementation
@@ -35,14 +36,65 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
     //the entity must have a navMeshAgent component
     private NavMeshAgent m_thisNavMeshAgent;
 
+    private ITargetable m_currentTarget;
+
+    [SerializeField]
+    private List<Weapon> m_weapons = new List<Weapon>();
+
     void Awake()
     {
         m_thisNavMeshAgent = GetComponent<NavMeshAgent>();
     }
 
+    //return true if this agent is able to attack this a weapon
+    public bool CanAttack()
+    {
+        if( m_weapons.Count == 0 )
+            return false;
+        if( !m_canAttack )
+            return false;
+
+        return true;
+    }
+
+    //return true if this agent can directly attack the target 
+    public bool CanAttack(Target target)
+    {
+        if( m_weapons.Count == 0 )
+            return false;
+        if( !m_canAttack )
+            return false;
+
+        float distanceToTarget = Vector3.Distance( transform.position, target.transform.position );
+        foreach(Weapon weapon in m_weapons)
+        {
+            if(weapon.Range < distanceToTarget)
+                return false;
+        }
+
+        return true;
+    }
+
+    //directlry fire with all weapons
     public void attack()
     {
-        //TODO
+        foreach(Weapon weapon in m_weapons)
+        {
+            weapon.Fire();
+        }
+    }
+
+    //rotate toward the target, then fire
+    public void attack(Target target)
+    {
+        transform.LookAt( target.transform );
+        attack();
+    }
+
+    //move to a position
+    public void move( Vector3 position )
+    {
+        m_thisNavMeshAgent.SetDestination( position );
     }
 
     public string getDescription()
@@ -58,11 +110,6 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
     public string getName()
     {
         return m_name;
-    }
-
-    public void move(Vector3 position)
-    {
-        m_thisNavMeshAgent.SetDestination(position);
     }
 
     public void pickUp()
