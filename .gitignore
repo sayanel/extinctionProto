@@ -46,3 +46,12 @@ Assets/Plugins*
 Assets/Effects*
 Assets/Prefabs*
 Assets/Scenes*
+Assets/Photon*
+
+
+# ========================== #
+# Extinction Build exe       #
+# ========================== #
+
+extinction_build/
+extinction.exe
