@@ -11,11 +11,9 @@ public class PlayerNetworkMover : Photon.MonoBehaviour {
     Vector3 m_correctPlayerPos; //< smooth
     Quaternion m_correctPlayerRot; //< smooth
     PlayerController m_playerController;
-    CharacterState m_previousState;
 
     void Start() {
         m_playerController = GetComponent<PlayerController>();
-        m_previousState = m_playerController.state;
     }
 
     /// <summary>
@@ -44,12 +42,7 @@ public class PlayerNetworkMover : Photon.MonoBehaviour {
             // we handle this character: send to others the transform data
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-
-            // send to network only if state has changed
-            if(!m_playerController.state.Equals(m_previousState)) {
-                m_previousState = m_playerController.state;
-                stream.SendNext((int)m_previousState);
-            }
+            stream.SendNext(m_playerController.state);
         }
         else {
             // Network player, receive data (this object viewed into other windows game over network)
