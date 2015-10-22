@@ -33,7 +33,13 @@ public class PlayerController : MonoBehaviour {
 
     //-------------- Public --------------
 
-    public Weapon weapon;
+    public CharacterController m_controller;
+    public Animator m_animator;
+
+    public Weapon m_weapon;
+
+    public Transform m_playerTransform;
+    public Transform m_cameraTransform;
 
     public bool m_isControllable = false;
 
@@ -63,26 +69,13 @@ public class PlayerController : MonoBehaviour {
     private float m_ySpeed = 0;
     private float m_zSpeed = 0;
     private Vector3 m_moveDirection = Vector3.zero;
-     
-    private float m_rotationY = 0F;
-    
-    private CharacterController m_controller;
-    private Animator m_animator;
 
+    private float m_rotationY = 0F;
+    private float m_rotationX = 0F;
+    
     void Start()
     {
-        m_controller = GetComponent<CharacterController>();
-        m_animator = GetComponent<Animator>();
-
-        if ( m_controller == null )
-        {
-            throw new MissingComponentException( "No Character controller is attached to your game object" );
-        }
-
-        if ( m_animator == null )
-        {
-            throw new MissingComponentException( "No animator is attached to your game object" );
-        }
+       
     }
 
 	void Update() 
@@ -144,6 +137,8 @@ public class PlayerController : MonoBehaviour {
 
         // Move the controller
         m_controller.Move( m_moveDirection * Time.deltaTime );
+
+        m_playerTransform.position = transform.position;
     }
 
     void SpecialMove()
@@ -153,7 +148,7 @@ public class PlayerController : MonoBehaviour {
         if ( Input.GetMouseButton( 1 ) ) m_aiming = true;
         if ( Input.GetMouseButton( 0 ) )
         {
-            weapon.Fire();
+            m_weapon.Fire();
         }
     }
 
@@ -164,12 +159,19 @@ public class PlayerController : MonoBehaviour {
     {
         if ( m_axes == RotationAxes.MouseXAndY )
         {
-            float rotationX = transform.localEulerAngles.y + Input.GetAxis( "Mouse X" ) * m_mouseSensivity;
+            //m_rotationX += transform.localEulerAngles.y + Input.GetAxis( "Mouse X" ) * m_mouseSensivity;
+            m_rotationX += Input.GetAxis( "Mouse X" ) * m_mouseSensivity;
 
             m_rotationY += Input.GetAxis( "Mouse Y" ) * m_mouseSensivity;
             m_rotationY = Mathf.Clamp( m_rotationY, m_minRotY, m_maxRotY );
 
-            transform.localEulerAngles = new Vector3( -m_rotationY, rotationX, 0 );
+            transform.localEulerAngles = new Vector3( 0, m_rotationX, 0 );
+            m_playerTransform.localEulerAngles = new Vector3( 0, m_rotationX, 0 );
+
+            Vector3 cameraAngle = m_cameraTransform.localEulerAngles;
+            cameraAngle.x = -m_rotationY;
+            m_cameraTransform.localEulerAngles = cameraAngle;
+
         }
         else if ( m_axes == RotationAxes.MouseX )
         {

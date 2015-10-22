@@ -41,6 +41,13 @@ public class RayWeapon : Weapon
         {
             RaycastHit hitInfo;
 
+            IWeaponEvent[] events =  GetComponentsInChildren<IWeaponEvent>();
+
+            foreach(IWeaponEvent weaponEvent in events)
+            {
+                weaponEvent.OnFire();
+            }
+
             //Draw debug ray
             //Debug.DrawRay( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward * 30, new Color( 1, 0, 0 ), 30f );
 
@@ -55,4 +62,6 @@ public class RayWeapon : Weapon
             m_previousTime = Time.time;
         }
     }
+
+    
 }
