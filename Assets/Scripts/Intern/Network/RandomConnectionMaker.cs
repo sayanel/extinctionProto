@@ -8,7 +8,7 @@ using System.Collections;
 /// Warning! Checkbox "AutoJoin Lobby" must be checked
 /// </summary>
 public class RandomConnectionMaker : Photon.PunBehaviour{
-    public string typePrefabInstanciate = "LeMale";
+    public string typePrefabInstanciate = "FPSPlayer";
 
     /// <summary>
     /// Launch the connection to Photon Server (must be PhotonCloud on PhotonSettings)

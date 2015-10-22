@@ -6,7 +6,7 @@ using System.Collections;
 /// Used for infos to send and to receive to others players: PhotonView observes on this script
 /// Attached on a player(prefab)
 /// </summary>
-public class NetworkCharacter : Photon.MonoBehaviour {
+public class PlayerNetworkMover : Photon.MonoBehaviour {
 
     Vector3 m_correctPlayerPos; //< smooth
     Quaternion m_correctPlayerRot; //< smooth
