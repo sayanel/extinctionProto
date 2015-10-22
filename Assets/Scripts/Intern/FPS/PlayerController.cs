@@ -38,7 +38,6 @@ public class PlayerController : MonoBehaviour {
 
     public Weapon m_weapon;
 
-    public Transform m_playerTransform;
     public Transform m_cameraTransform;
 
     public bool m_isControllable = false;
@@ -137,8 +136,6 @@ public class PlayerController : MonoBehaviour {
 
         // Move the controller
         m_controller.Move( m_moveDirection * Time.deltaTime );
-
-        m_playerTransform.position = transform.position;
     }
 
     void SpecialMove()
@@ -166,7 +163,7 @@ public class PlayerController : MonoBehaviour {
             m_rotationY = Mathf.Clamp( m_rotationY, m_minRotY, m_maxRotY );
 
             transform.localEulerAngles = new Vector3( 0, m_rotationX, 0 );
-            m_playerTransform.localEulerAngles = new Vector3( 0, m_rotationX, 0 );
+            //m_playerTransform.localEulerAngles = new Vector3( 0, m_rotationX, 0 );
 
             Vector3 cameraAngle = m_cameraTransform.localEulerAngles;
             cameraAngle.x = -m_rotationY;
