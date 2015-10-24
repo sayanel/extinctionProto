@@ -58,22 +58,35 @@ public class TopDownController : MonoBehaviour
                 {
                     Debug.Log( "mouse encounter a target with tag : " + m_mouseTargetInfo.tag.ToString() );
 
-                    if(m_mouseTargetInfo.tag == "Target")
+                    if( m_mouseTargetInfo.tag == "Target" )
                     {
                         //store a pointer to the current target
                         m_currentTarget = m_mouseTargetInfo.gameObject.GetComponent<Target>();
 
                         //launch a coroutine for attack behaviour
-                        if(m_currentTarget != null)
+                        if( m_currentTarget != null )
                             MoveAndAttack();
                     }
                     else
-                        m_agent.move(m_mouseTargetInfo.position);
-                    // m_thisNavMeshAgent.SetDestination(m_mouseTargetInfo.position);
+                    {
+                        Move( m_mouseTargetInfo.position );
+                    }
                 }
             }
         }
 	}
+
+    void Move( Vector3 position )
+    {
+        //stop other tasks 
+        StopAllCoroutines();
+
+        //change agent task 
+        m_agent.Behaviour = TopDownAgent.TopDownBehaviour.MOVE;
+
+        //perform the task
+        m_agent.move(position);
+    }
 
     void MoveAndAttack()
     {

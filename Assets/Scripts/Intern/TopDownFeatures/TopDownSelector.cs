@@ -45,6 +45,7 @@ public class TopDownSelector : MonoBehaviour
     [SerializeField]
     private RectTransform m_GUISelection;
 
+
     void Awake()
     {
         m_thisTrigger = GetComponent<BoxCollider>();
@@ -221,6 +222,18 @@ public class TopDownSelector : MonoBehaviour
         //}
     }
 
+    
+
+    void OnGUI()
+    {
+        if(m_selecting)
+            GUIUtils.DrawScreenRectBorder( new Rect( m_beginPoint.x, Camera.main.pixelHeight - m_beginPoint.y, m_endPoint.x - m_beginPoint.x, m_beginPoint.y - m_endPoint.y ), 1, Color.red );
+    }
+
+    //deprecated methode to render a select box on screen. 
+    //issued render bug with this methode.
+    // replaced by OnGUI render
+    /*
     public void OnRenderObject()
     {
         if (!m_selecting)
@@ -251,6 +264,6 @@ public class TopDownSelector : MonoBehaviour
             GL.Vertex3(0, 0, 0 * height);
         GL.End();
         GL.PopMatrix();
-    }
+    }*/
 
 }

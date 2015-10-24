@@ -49,6 +49,10 @@ public class RayWeapon : Weapon
                     target.TakeDammage( m_dammage );
             }
 
+            Debug.Log( "Fire" );
+            Debug.DrawRay( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward * m_rayLength, Color.red, 10 );
+            Debug.DrawLine( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.position + m_anchor.forward * ( m_minDistance + m_rayLength ) );
+
             m_previousTime = Time.time;
         }
     }
