@@ -15,12 +15,6 @@ public class ProjectileWeapon : Weapon
     protected float m_velocity = 10;
 
     /// <summary>
-    /// the position from which the projectile will spawn 
-    /// </summary>
-    [SerializeField]
-    protected Transform m_anchor;
-
-    /// <summary>
     /// if an entity has one of these tags, the projectile can hit the entity.
     /// </summary>
     [SerializeField]
@@ -28,6 +22,9 @@ public class ProjectileWeapon : Weapon
 
     void Awake()
     {
+        //initializes list of events triggered by this weapon 
+        InitWeaponEvents();
+
         //reset the timer
         m_previousTime = Time.time;
 
@@ -50,11 +47,8 @@ public class ProjectileWeapon : Weapon
 
             Rigidbody projectileBody = projectile.GetComponent<Rigidbody>();
 
-            //deals with all event this weapon triggers when it shoots
-            foreach( IWeaponEvent weaponEvent in m_weaponEvents )
-            {
-                weaponEvent.OnFire();
-            }
+            //deals with weapon events
+            OnFire();
 
             //launch the projectile
             if( projectileBody != null )

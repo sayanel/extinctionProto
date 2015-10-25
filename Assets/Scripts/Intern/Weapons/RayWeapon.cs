@@ -26,12 +26,6 @@ public class RayWeapon : Weapon
     protected string[] m_targetLayers;
 
     /// <summary>
-    /// The transform from which the ray will start.
-    /// </summary>
-    [SerializeField]
-    protected Transform m_anchor;
-
-    /// <summary>
     /// m_maxDistance = ( m_rayLength + m_minDistance );
     /// max distance the ray can reach, from m_anchor.position.
     /// </summary>
@@ -39,8 +33,13 @@ public class RayWeapon : Weapon
 
     void Awake()
     {
+        //initializes list of events triggered by this weapon 
+        InitWeaponEvents();
+
+        //reset the timer
         m_previousTime = Time.time;
 
+        //compute maxDistance
         m_maxDistance = ( m_rayLength + m_minDistance );
 
         //by default, if m_anchor has't been assign, it will be the first child of this
@@ -55,12 +54,9 @@ public class RayWeapon : Weapon
         if( (Time.time - m_previousTime) >= m_fireRate )
         {
             RaycastHit hitInfo;
-            
-            //deals with all event this weapon triggers when it shoots
-            foreach( IWeaponEvent weaponEvent in m_weaponEvents )
-            {
-                weaponEvent.OnFire();
-            }
+
+            //deals with weapon events
+            OnFire();
 
             //perform raycast
             if( Physics.Raycast( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward, out hitInfo, m_rayLength, LayerMask.GetMask( m_targetLayers ) ) )
