@@ -5,9 +5,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Base class for all weapons.
 /// </summary>
-public abstract class Weapon : MonoBehaviour 
+public abstract class Weapon : MonoBehaviour
 {
-    public enum AmmoType {DEFAULT};
+    public enum AmmoType { DEFAULT };
 
     /// <summary>
     /// The fire rate of this weapon
@@ -33,6 +33,12 @@ public abstract class Weapon : MonoBehaviour
     /// </summary>
     [SerializeField]
     protected float m_range = 10;
+
+    /// <summary>
+    /// A list which contains all the events called by firing with this weapon.
+    /// </summary>
+    [SerializeField]
+    protected List<IWeaponEvent> m_weaponEvents = new List<IWeaponEvent>();
 
 
     //overrideable assessors : 
