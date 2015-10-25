@@ -4,13 +4,10 @@ using System.Collections.Generic;
 
 public class TestWeaponEntity : MonoBehaviour 
 {
-    Weapon m_thisWeapon;
+    [SerializeField]
+    private Weapon m_thisWeapon;
 
-	void Awake()
-	{
-        m_thisWeapon = GetComponent<Weapon>();
-    }
-	
+
 	void Update() 
 	{
 	    if(Input.GetMouseButtonDown(0))
