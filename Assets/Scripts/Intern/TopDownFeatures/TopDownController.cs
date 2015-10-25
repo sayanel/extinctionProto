@@ -76,21 +76,32 @@ public class TopDownController : MonoBehaviour
         }
 	}
 
-    void Move( Vector3 position )
+    void ResetBehaviour()
     {
         //stop other tasks 
         StopAllCoroutines();
 
         //change agent task 
+        m_agent.Behaviour = TopDownAgent.TopDownBehaviour.IDLE;
+
+        //stop walking
+        m_agent.StopWalking();
+    }
+
+    void Move( Vector3 position )
+    {
+        ResetBehaviour();
+
+        //change agent task 
         m_agent.Behaviour = TopDownAgent.TopDownBehaviour.MOVE;
 
         //perform the task
-        m_agent.move(position);
+        m_agent.Move(position);
     }
 
     void MoveAndAttack()
     {
-        StopAllCoroutines();
+        ResetBehaviour();
 
         //change agent task 
         m_agent.Behaviour = TopDownAgent.TopDownBehaviour.ATTACK;
@@ -101,7 +112,7 @@ public class TopDownController : MonoBehaviour
 
     void Idle()
     {
-        StopAllCoroutines();
+        ResetBehaviour();
 
         //change agent task
         m_agent.Behaviour = TopDownAgent.TopDownBehaviour.IDLE;
@@ -121,11 +132,12 @@ public class TopDownController : MonoBehaviour
             //Check if agent can attack
             else if( m_agent.CanAttack( m_currentTarget ) )
             {
+                m_agent.StopWalking();
                 m_agent.attack( m_currentTarget );
             }
             else
             {
-                m_agent.move( m_currentTarget.transform.position );
+                m_agent.Move( m_currentTarget.transform.position );
             }
 
             yield return new WaitForSeconds( m_iaDelay );

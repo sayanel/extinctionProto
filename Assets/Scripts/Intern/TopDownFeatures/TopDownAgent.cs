@@ -103,9 +103,16 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
     }
 
     //move to a position
-    public void move( Vector3 position )
+    public void Move( Vector3 position )
     {
+        m_thisNavMeshAgent.Resume();
         m_thisNavMeshAgent.SetDestination( position );
+    }
+
+    //stop the movement of this agent, if it is walking
+    public void StopWalking()
+    {
+        m_thisNavMeshAgent.Stop();
     }
 
     public string getDescription()

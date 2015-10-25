@@ -68,6 +68,8 @@ public class TopDownCamera : MonoBehaviour
         }
 
         m_currentZoom = m_zoomMax;
+
+        zoom( 0 );
 	}
 
     //apply the result of direction computation to move the camera
@@ -103,9 +105,9 @@ public class TopDownCamera : MonoBehaviour
             m_direction += new Vector2(0, m_velocity);
         }
 
-        if( !Mathf.Approximately(0.0F, Input.GetAxis( "Vertical" ) ) )
+        if( !Mathf.Approximately(0.0F, Input.GetAxis( "Mouse ScrollWheel" ) ) )
         {
-            zoom( Input.GetAxis( "Vertical" ) );
+            zoom( Input.GetAxis( "Mouse ScrollWheel" ) );
         }
 
         //move the camera

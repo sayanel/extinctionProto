@@ -7,6 +7,6 @@ using System.Collections;
 public interface ICharacter
 {
     void attack();
-    void move(Vector3 position);
+    void Move(Vector3 position);
     void pickUp();
 }
