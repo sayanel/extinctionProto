@@ -7,19 +7,34 @@ using System.Collections.Generic;
 /// </summary>
 public class RayWeapon : Weapon 
 {
-
+    /// <summary>
+    /// an offset for the begin point of the ray.
+    /// </summary>
     [SerializeField]
     protected float m_minDistance = 1;
 
+    /// <summary>
+    /// the length of the ray from its begin point to its end point
+    /// </summary>
     [SerializeField]
     protected float m_rayLength = 100;
 
+    /// <summary>
+    /// the ray will only hit targets on these layers
+    /// </summary>
     [SerializeField]
-    protected string[] m_targetTag;
+    protected string[] m_targetLayers;
 
+    /// <summary>
+    /// The transform from which the ray will start.
+    /// </summary>
     [SerializeField]
     protected Transform m_anchor;
 
+    /// <summary>
+    /// m_maxDistance = ( m_rayLength + m_minDistance );
+    /// max distance the ray can reach, from m_anchor.position.
+    /// </summary>
     protected float m_maxDistance = 100;
 
     void Awake()
@@ -40,7 +55,15 @@ public class RayWeapon : Weapon
         if( (Time.time - m_previousTime) >= m_fireRate )
         {
             RaycastHit hitInfo;
-            if( Physics.Raycast( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward, out hitInfo, m_rayLength, LayerMask.GetMask( m_targetTag ) ) )
+            
+            //deals with all event this weapon triggers when it shoots
+            foreach( IWeaponEvent weaponEvent in m_weaponEvents )
+            {
+                weaponEvent.OnFire();
+            }
+
+            //perform raycast
+            if( Physics.Raycast( m_anchor.position + m_anchor.forward * m_minDistance, m_anchor.forward, out hitInfo, m_rayLength, LayerMask.GetMask( m_targetLayers ) ) )
             {
                 Debug.Log( "ray !!! " );
                 ITargetable target = hitInfo.transform.GetComponent<ITargetable>();

@@ -50,6 +50,12 @@ public class ProjectileWeapon : Weapon
 
             Rigidbody projectileBody = projectile.GetComponent<Rigidbody>();
 
+            //deals with all event this weapon triggers when it shoots
+            foreach( IWeaponEvent weaponEvent in m_weaponEvents )
+            {
+                weaponEvent.OnFire();
+            }
+
             //launch the projectile
             if( projectileBody != null )
                 projectileBody.AddForce( m_anchor.forward * m_velocity );
