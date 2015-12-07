@@ -75,11 +75,18 @@ public class WeaponEvent : MonoBehaviour, IWeaponEvent
     {
         yield return new WaitForSeconds( delta );
         
-        m_thisAudioSource.enabled = false;
-        m_thisLight.enabled = false;
-        m_thisParticleSystem.enableEmission = false;
+        //turn off attached components
+        if(m_hasSound)
+            m_thisAudioSource.enabled = false;
+        if(m_hasLight)
+            m_thisLight.enabled = false;
+        if(m_hasParticleSystem)
+            m_thisParticleSystem.enableEmission = false;
     }
 
+    /**
+    *   turn on the light, wait for m_lightDelay, then turn off the light
+    */
     IEnumerator animLightFlare_on()
     {
         m_thisLight.intensity = 10;

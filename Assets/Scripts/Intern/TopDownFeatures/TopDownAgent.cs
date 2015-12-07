@@ -57,7 +57,9 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         m_thisNavMeshAgent = GetComponent<NavMeshAgent>();
     }
 
-    //return true if this agent is able to attack this a weapon
+    /// <summary>
+    /// return true if this agent is able to attack this a weapon
+    /// </summary>
     public bool CanAttack()
     {
         if( m_weapons.Count == 0 )
@@ -68,7 +70,9 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         return true;
     }
 
-    //return true if this agent can directly attack the target
+    /// <summary>
+    /// return true if this agent can directly attack the target
+    /// </summary>
     public bool CanAttack(Target target)
     {
         if( m_weapons.Count == 0 )
@@ -86,7 +90,9 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         return true;
     }
 
-    //directlry fire with all weapons
+    /// <summary>
+    /// directlry fire with all weapons
+    /// </summary>
     public void attack()
     {
         foreach(Weapon weapon in m_weapons)
@@ -95,21 +101,27 @@ public class TopDownAgent : MonoBehaviour, ISelectable, ICharacter
         }
     }
 
-    //rotate toward the target, then fire
+    /// <summary>
+    /// Rotate toward the target, then fire
+    /// </summary>
     public void attack(Target target)
     {
         transform.LookAt( target.transform );
         attack();
     }
 
-    //move to a position
+    /// <summary>
+    /// Move the agent to a position
+    /// </summary>
     public void Move( Vector3 position )
     {
         m_thisNavMeshAgent.Resume();
         m_thisNavMeshAgent.SetDestination( position );
     }
 
-    //stop the movement of this agent, if it is walking
+    /// <summary>
+    /// stop the movement of this agent, if it is walking
+    /// </summary>
     public void StopWalking()
     {
         m_thisNavMeshAgent.Stop();
